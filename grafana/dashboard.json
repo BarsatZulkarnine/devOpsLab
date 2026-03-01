@@ -147,16 +147,28 @@
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "fieldConfig": {
-        "defaults": {"color": {"mode": "palette-classic"}, "unit": "short"},
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 4}, {"color": "red", "value": 7}]},
+          "min": 0,
+          "max": 8
+        },
         "overrides": []
       },
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 27},
       "id": 8,
+      "options": {"legend": {"calcs": ["last", "max"], "displayMode": "table", "placement": "bottom"}},
       "targets": [
         {
-          "expr": "count(up{job=\"devops-lab\"} == 1)",
+          "expr": "sum(kube_pod_status_phase{namespace=\"devops-lab\", phase=\"Running\"}) or vector(0)",
           "legendFormat": "Running pods",
           "refId": "A"
+        },
+        {
+          "expr": "count(container_last_seen{container_label_io_kubernetes_pod_namespace=\"devops-lab\", container_label_io_kubernetes_container_name=\"devops-lab\"}) or vector(0)",
+          "legendFormat": "Pods (cAdvisor)",
+          "refId": "B"
         }
       ],
       "title": "Pod Count (HPA scaling)",
@@ -165,19 +177,25 @@
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "fieldConfig": {
-        "defaults": {"color": {"mode": "palette-classic"}, "unit": "percentunit"},
+        "defaults": {"color": {"mode": "palette-classic"}, "unit": "percentunit", "min": 0, "max": 1},
         "overrides": []
       },
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 27},
       "id": 9,
+      "options": {"legend": {"calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom"}},
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_app=\"devops-lab\"}[1m]))",
-          "legendFormat": "CPU usage",
+          "expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m]))",
+          "legendFormat": "Pi CPU used",
           "refId": "A"
+        },
+        {
+          "expr": "avg(rate(node_cpu_seconds_total{mode=\"iowait\"}[1m]))",
+          "legendFormat": "IO wait",
+          "refId": "B"
         }
       ],
-      "title": "App CPU Usage",
+      "title": "Pi CPU Usage (spikes = load / attacks)",
       "type": "timeseries"
     }
   ],

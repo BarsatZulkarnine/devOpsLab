@@ -81,7 +81,8 @@ def main():
 
     t0 = time.monotonic()
 
-    with threading.Semaphore(args.concurrency) as sem:
+    sem = threading.Semaphore(args.concurrency)
+    if True:
         threads = []
         for password in wordlist:
             sem.acquire()
