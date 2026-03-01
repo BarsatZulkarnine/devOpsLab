@@ -1,0 +1,17 @@
+# ServiceMonitor for Prometheus Operator (if you're using kube-prometheus-stack).
+# If running standalone Prometheus, use the pod annotations in deployment.yaml instead.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devops-lab
+  namespace: devops-lab
+  labels:
+    app: devops-lab
+spec:
+  selector:
+    matchLabels:
+      app: devops-lab
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

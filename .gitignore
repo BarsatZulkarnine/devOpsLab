@@ -1,0 +1,21 @@
+# Go
+app/devops-lab
+app/coverage.out
+app/*.test
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Secrets
+.env
+*.pem
+*.key
